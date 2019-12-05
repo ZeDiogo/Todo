@@ -14,8 +14,6 @@ namespace Todo
         public Form3()
         {
             InitializeComponent();
-            centerToForm(this.taskName);
-            centerToForm(this.passwordInput);
             this.passwordLabel.Location = new Point(this.passwordInput.Location.X, this.passwordLabel.Location.Y);
             this.ActiveControl = this.passwordInput;
         }
@@ -23,13 +21,26 @@ namespace Todo
         public Form3(string label, bool error) : this()
         {
             if(error) this.errorLabel.Visible = true;
-            this.taskName.Text = label;
+            centerLabelToForm(this.taskName, label);
+            centerInputToForm(this.passwordInput);
         }
 
-        private void centerToForm (Control component)
+        private void centerInputToForm(Control component)
         {
             var formCenterX = this.Size.Width / 2;
             var newX = formCenterX - (component.Size.Width / 2);
+            component.Location = new Point(newX, component.Location.Y);
+        }
+
+        private void centerLabelToForm (Control component, String label)
+        {
+            int length = component.Text.Length;
+            if (length == 0) { length = 1; } //Erase  divisions by zero
+            var widthPerLetter = component.Size.Width / length;
+            if (label != null) { component.Text = label; }
+            var componentWidth = widthPerLetter * component.Text.Length;
+            var formCenterX = this.Size.Width / 2;
+            var newX = formCenterX - (componentWidth / 2);
             component.Location = new Point(newX, component.Location.Y);
         }
 
@@ -51,8 +62,7 @@ namespace Todo
         public string ShowAndReturn()
         {
             try
-            {
-                
+            {   
                 var result = this.ShowDialog();
                 //MessageBox.Show("MESSAGE: " + result);
                 if (result == DialogResult.OK)
